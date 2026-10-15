@@ -1,8 +1,9 @@
 <template>
 	<view>
 		<button class="install-trigger" role="button" tabindex="0" aria-label="安装核药通" @tap="open" @keydown.enter.prevent="open" @keydown.space.prevent="open">📲 安装</button>
-		<view v-if="visible" class="install-overlay" @tap.self="close" @keydown="onKeydown">
-			<view class="install-panel" role="dialog" aria-modal="true" aria-label="安装核药通">
+		<teleport to="body">
+		<view v-if="visible" class="install-overlay" :class="theme" @tap.self="close" @keydown="onKeydown">
+			<view ref="panel" class="install-panel" role="dialog" aria-modal="true" aria-label="安装核药通">
 				<view class="install-heading"><text class="np-h2">安装核药通</text><button class="install-close" role="button" tabindex="0" aria-label="关闭安装面板" @tap="close" @keydown.enter.prevent="close" @keydown.space.prevent="close">×</button></view>
 				<text class="install-copy">Android 手机下载 APK，安装后可完全离线学习。首次安装时，请按浏览器提示允许安装此应用。</text>
 				<a class="install-download" :href="apkUrl">📥 下载应用（APK）</a>
@@ -11,19 +12,23 @@
 				<a class="install-releases" :href="releasesUrl" target="_blank" rel="noopener noreferrer">查看版本与校验信息 ↗</a>
 			</view>
 		</view>
+		</teleport>
 	</view>
 </template>
 <script>
 import { APK_URL, RELEASES_URL } from '../core/release-info.js'
+import store from '../core/store.js'
 export default {
 	name: 'InstallPanel',
 	data: () => ({ visible: false, apkUrl: APK_URL, releasesUrl: RELEASES_URL }),
+	computed: { theme: () => store.themeClass() },
 	beforeUnmount() { this.unlock() },
 	methods: {
+		panelElement() { return this.$refs.panel?.$el || this.$refs.panel },
 		onKeydown(event) {
 			if (event.key === 'Escape') { event.preventDefault(); this.close(); return }
 			if (event.key !== 'Tab') return
-			const controls = Array.from(this.$el.querySelectorAll('.install-panel [tabindex="0"], .install-panel a[href]'))
+			const controls = Array.from(this.panelElement().querySelectorAll('[tabindex="0"], a[href]'))
 			const first = controls[0], last = controls[controls.length - 1]
 			if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus() }
 			else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus() }
@@ -34,7 +39,7 @@ export default {
 			this.previousOverflow = document.body.style.overflow
 			document.body.style.overflow = 'hidden'
 			this.visible = true
-			this.$nextTick(() => this.$el.querySelector('.install-close')?.focus())
+			this.$nextTick(() => this.panelElement()?.querySelector('.install-close')?.focus())
 		},
 		unlock() { if (this.visible) document.body.style.overflow = this.previousOverflow || '' },
 		close() { this.unlock(); this.visible = false; this.previousFocus?.focus?.() }
@@ -43,9 +48,10 @@ export default {
 </script>
 <style scoped>
 .install-trigger { margin:0; padding:0 8px; min-width:64px; min-height:44px; display:flex; align-items:center; justify-content:center; background:var(--np-surface); color:var(--np-primary); border:1px solid var(--np-border); border-radius:10px; font-size:12px; white-space:nowrap }
-.install-overlay { position:fixed; inset:0; z-index:1000; display:flex; align-items:center; justify-content:center; padding:20px; box-sizing:border-box; background:rgba(5,20,27,.58) }
+.install-overlay { position:fixed; inset:0; z-index:10000; display:flex; align-items:center; justify-content:center; padding:20px; box-sizing:border-box; background:rgba(5,20,27,.58) }
 .install-panel { width:100%; max-width:420px; max-height:85vh; overflow:auto; box-sizing:border-box; padding:24px; border-radius:20px; background:var(--np-surface); color:var(--np-text); box-shadow:0 16px 60px rgba(0,0,0,.2) }
 .install-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px }
+.install-heading .np-h2 { font-size:20px; font-weight:700 }
 .install-close { margin:0; padding:0; min-width:44px; height:44px; background:var(--np-surface-2); color:var(--np-text); font-size:24px; border:0; border-radius:12px }
 .install-copy { display:block; font-size:14px; line-height:1.8; margin-bottom:16px; color:var(--np-text-2) }
 .install-download { display:block; padding:14px 12px; margin-bottom:20px; background:var(--np-primary); color:var(--np-on-primary); text-align:center; text-decoration:none; border-radius:12px; font-weight:700; font-size:16px }

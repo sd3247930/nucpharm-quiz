@@ -20,6 +20,7 @@ test('安装入口：五页一致、窄屏无溢出、下载直链与键盘关�
       assert.equal(await page.evaluate("document.body.style.overflow"), 'hidden')
       assert.equal(await page.evaluate("document.activeElement.classList.contains('install-close')"), true)
       assert.equal(await page.evaluate("document.querySelector('.install-panel').getBoundingClientRect().right <= innerWidth"), true)
+      assert.equal(await page.evaluate("!!document.elementFromPoint(innerWidth / 2, innerHeight - 20)?.closest('.install-overlay')"), true, '遮罩盖住底部导航')
       await page.evaluate("document.activeElement.dispatchEvent(new KeyboardEvent('keydown', {key:'Escape', bubbles:true, cancelable:true}))")
       assert.equal(await page.evaluate("document.querySelector('.install-panel') === null"), true)
       assert.notEqual(await page.evaluate('document.body.style.overflow'), 'hidden')
