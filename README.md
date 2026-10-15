@@ -46,6 +46,8 @@ npm run build:android
 ```sh
 npm ci
 npm test                 # 核心单元 / 集成测试
+npm run audit:check       # 注册表依赖漏洞检查（low 及以上即失败）
+npm run test:security     # 本地补丁和恶意输入安全回归
 npm run build:h5          # 构建网页
 npm run test:e2e          # Edge / Chrome 真实浏览器回归
 npm run build:app         # 编译 uni-app Android 业务资源
@@ -65,6 +67,8 @@ tests/             单元、集成与浏览器测试
 ```
 
 **GitHub Actions 自动发布：**推送版本标签或发布 Release 后，Android Release 工作流自动编译当前业务资源、装入经过校验的 HBuilderX 原生运行壳、使用正式证书签名并上传 APK。网页由 Deploy Web 部署。原生版本更新和签名配置步骤见 [BUILD.md](BUILD.md)。
+
+依赖安全版本和本地补丁说明见 [DEPENDENCY_SECURITY.md](DEPENDENCY_SECURITY.md)；发布前同时执行漏洞审计与安全回归。
 
 ## 数据与隐私
 

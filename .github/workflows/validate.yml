@@ -34,6 +34,11 @@ jobs:
 
       - run: npm ci --no-fund
 
+      - name: Dependency audit and security regression
+        run: |
+          npm run audit:check
+          npm run test:security
+
       - run: npm run build:h5
 
       - name: Prepare ignored test report directory

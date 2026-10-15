@@ -38,6 +38,8 @@ jobs:
         with:
           python-version: '3.12'
       - run: npm ci --no-fund
+      - run: npm run audit:check
+      - run: npm run test:security
       - name: Verify source and run core tests
         run: |
           python scripts/security-audit.py

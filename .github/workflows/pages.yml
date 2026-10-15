@@ -20,6 +20,8 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci --no-fund
+      - run: npm run audit:check
+      - run: npm run test:security
       - run: npm run build:h5
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
