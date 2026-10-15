@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="144" height="144" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="primary" x1="13" y1="6" x2="45" y2="55" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#76B3D2"/><stop offset="1" stop-color="#8A6BB2"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="34" y1="27" x2="55" y2="55" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#EA9EAC"/><stop offset="1" stop-color="#C86382"/>
+    </linearGradient>
+  </defs>
+  <rect x="10" y="7" width="39" height="47" rx="5" fill="url(#primary)"/>
+  <g stroke="#E6F3FF" stroke-width="2.8" stroke-linecap="round">
+    <path d="M6 16h8M6 25h8M6 34h8M6 43h8M20 42h12M20 48h9"/>
+  </g>
+  <path d="m24 19 12 12M36 19 24 31" stroke="url(#accent)" stroke-width="5" stroke-linecap="round"/>
+  <path d="m44 32 14 21a3 3 0 0 1-2.5 4.5h-28A3 3 0 0 1 25 53l14-21a3 3 0 0 1 5 0Z" fill="url(#accent)" stroke="#F7FAFF" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M41.5 39v8" stroke="#F7FAFF" stroke-width="2.8" stroke-linecap="round"/>
+  <circle cx="41.5" cy="52" r="1.5" fill="#F7FAFF"/>
+  <rect id="selected-indicator" x="23" y="60" width="18" height="3" rx="1.5" fill="url(#accent)" opacity="0"/>
+</svg>

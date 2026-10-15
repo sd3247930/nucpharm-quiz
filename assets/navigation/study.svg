@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="144" height="144" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="primary" x1="13" y1="6" x2="45" y2="55" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#76B3D2"/><stop offset="1" stop-color="#8A6BB2"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="42" y1="5" x2="53" y2="31" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#EA9EAC"/><stop offset="1" stop-color="#C86382"/>
+    </linearGradient>
+  </defs>
+  <path d="M5 16c9-2 18 0 27 5 9-5 18-7 27-5v35c-9-1-18 0-27 6-9-6-18-7-27-6z" fill="url(#primary)"/>
+  <path d="M9 10c8-1 16 1 23 6 7-5 15-7 23-6v36c-8-1-15 1-23 6-8-5-15-7-23-6z" fill="url(#primary)" stroke="#F7FAFF" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M32 17v34M15 20c4 0 7 1 11 3M15 28c4 0 7 1 11 3M15 36c4 0 7 1 11 3" stroke="#E6F3FF" stroke-width="2.2" stroke-linecap="round"/>
+  <path d="m39 29 13-22a4 4 0 0 1 7 4L46 33l-9 5z" fill="url(#accent)" stroke="#F7FAFF" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="m49 12 7 4M39 29l7 4" stroke="#F7FAFF" stroke-width="2.2"/>
+  <path d="m37 38 3-8 6 3z" fill="#F7FAFF"/>
+  <rect id="selected-indicator" x="23" y="60" width="18" height="3" rx="1.5" fill="url(#primary)" opacity="0"/>
+</svg>

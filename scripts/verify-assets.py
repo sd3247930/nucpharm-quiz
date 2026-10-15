@@ -127,9 +127,9 @@ def main() -> int:
 
     print("2) 底部导航图标")
     for kind in TABBAR:
-        for suffix in ("", "-on", "-dark"):
-            name = f"static/tabbar/{kind}{suffix}.png"
-            found = check_png(ROOT / name, (81, 81))
+        for suffix in ("", "-on", "-dark-idle", "-dark"):
+            name = f"static/tabbar/soft-gradient/{kind}{suffix}.png"
+            found = check_png(ROOT / name, (144, 144))
             problems.extend(found)
             if not found:
                 print(f"  ✓ {name}")

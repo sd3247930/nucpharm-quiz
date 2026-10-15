@@ -27,7 +27,7 @@
 			</button>
 			<button class="exam-entry np-row" @tap="goExam">
 				<view class="np-icon-box">
-					<image src="/static/tabbar/exam-on.png" />
+					<image src="/static/tabbar/soft-gradient/exam-on.png" />
 				</view>
 				<view class="np-grow continue-body"><text class="entry-title">模拟考试</text><text
 						class="np-caption">70 题 · 100 分 · {{examMinutes}} 分钟</text></view>

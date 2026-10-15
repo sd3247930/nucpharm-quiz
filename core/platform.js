@@ -91,17 +91,22 @@ async function updateAppearance(dark) {
 	const updates = []
 	const settle = result => updates.push(Promise.resolve(result))
 	try {
+		// #ifdef H5
+		// 网页底栏在页面根节点之外，用全局主题标记同步其磨砂底色。
+		if (typeof document !== 'undefined') document.documentElement.dataset.npAppearance = dark ? 'dark' : 'light'
+		// #endif
 		// 显式引用 API，让 H5 编译器保留这些能力（动态 uni[name] 会被 tree-shaking 移除）。
 		if (typeof uni.setTabBarStyle === 'function') settle(uni.setTabBarStyle({
-			color: dark ? '#9FB0C0' : '#64748B',
-			selectedColor: dark ? '#4FB99F' : '#1A6B5A',
+			color: dark ? '#B0BED0' : '#526175',
+			selectedColor: dark ? '#B6CBFF' : '#315CA8',
 			backgroundColor: dark ? '#17212B' : '#FFFFFF',
 			borderStyle: dark ? 'black' : 'white'
 		}));
 		['home', 'study', 'exam', 'mistakes', 'settings'].forEach((name, index) => {
 			if (typeof uni.setTabBarItem === 'function') settle(uni.setTabBarItem({
 			index,
-			selectedIconPath: `/static/tabbar/${name}${dark ? '-dark' : '-on'}.png`
+			iconPath: `/static/tabbar/soft-gradient/${name}${dark ? '-dark-idle' : ''}.png`,
+			selectedIconPath: `/static/tabbar/soft-gradient/${name}${dark ? '-dark' : '-on'}.png`
 			}))
 		})
 		if (typeof uni.setNavigationBarColor === 'function') settle(uni.setNavigationBarColor({

@@ -43,6 +43,7 @@ jobs:
       - name: Verify source and run core tests
         run: |
           python scripts/security-audit.py
+          npm run test:android-package
           npm test
       - run: npm run build:app
       - name: Download pinned native runtime

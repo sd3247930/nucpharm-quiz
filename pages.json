@@ -89,44 +89,44 @@
     "backgroundColor": "#F7F9FC"
   },
   "tabBar": {
-    "color": "#7A8A99",
-    "selectedColor": "#1A6B5A",
+    "color": "#526175",
+    "selectedColor": "#315CA8",
     "backgroundColor": "#FFFFFF",
     "borderStyle": "white",
-    "fontSize": "10px",
-    "iconWidth": "22px",
-    "spacing": "3px",
-    "height": "52px",
+    "fontSize": "13px",
+    "iconWidth": "34px",
+    "spacing": "5px",
+    "height": "74px",
     "list": [
       {
         "pagePath": "pages/home/index",
         "text": "首页",
-        "iconPath": "static/tabbar/home.png",
-        "selectedIconPath": "static/tabbar/home-on.png"
+        "iconPath": "static/tabbar/soft-gradient/home.png",
+        "selectedIconPath": "static/tabbar/soft-gradient/home-on.png"
       },
       {
         "pagePath": "pages/study/index",
         "text": "练习",
-        "iconPath": "static/tabbar/study.png",
-        "selectedIconPath": "static/tabbar/study-on.png"
+        "iconPath": "static/tabbar/soft-gradient/study.png",
+        "selectedIconPath": "static/tabbar/soft-gradient/study-on.png"
       },
       {
         "pagePath": "pages/exam/index",
         "text": "考试",
-        "iconPath": "static/tabbar/exam.png",
-        "selectedIconPath": "static/tabbar/exam-on.png"
+        "iconPath": "static/tabbar/soft-gradient/exam.png",
+        "selectedIconPath": "static/tabbar/soft-gradient/exam-on.png"
       },
       {
         "pagePath": "pages/mistakes/index",
         "text": "错题",
-        "iconPath": "static/tabbar/mistakes.png",
-        "selectedIconPath": "static/tabbar/mistakes-on.png"
+        "iconPath": "static/tabbar/soft-gradient/mistakes.png",
+        "selectedIconPath": "static/tabbar/soft-gradient/mistakes-on.png"
       },
       {
         "pagePath": "pages/settings/index",
         "text": "设置",
-        "iconPath": "static/tabbar/settings.png",
-        "selectedIconPath": "static/tabbar/settings-on.png"
+        "iconPath": "static/tabbar/soft-gradient/settings.png",
+        "selectedIconPath": "static/tabbar/soft-gradient/settings-on.png"
       }
     ]
   },

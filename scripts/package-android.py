@@ -1,10 +1,12 @@
 """Build a signed APK from compiled uni-app resources and a verified native runtime.
 
-Native code, manifest and icons come from the pinned runtime APK. This is a
-resource build, not a replacement for HBuilderX when native configuration changes.
+Native code, AndroidManifest and launcher icons come from the pinned runtime APK.
+Compiled splash/tab-bar UI metadata follows the resource build; engine or native
+identity changes still require HBuilderX.
 Passwords are accepted only through environment variables and never printed.
 """
 import argparse
+from copy import deepcopy
 import hashlib
 import json
 import os
@@ -22,6 +24,26 @@ def run(command):
         # Avoid leaking command arguments, signer errors or private machine paths.
         raise RuntimeError(f'{Path(command[0]).name} failed (exit {result.returncode})')
     return result.stdout
+
+
+def merge_resource_manifest(original, compiled):
+    """Update compiled UI metadata while keeping the pinned runtime's identity/config."""
+    if original['id'] != compiled['id'] or original['version'] != compiled['version']:
+        raise RuntimeError('Native identity/version changed: regenerate the HBuilderX runtime')
+    result = deepcopy(original)
+    plus = result['plus']
+    plus.setdefault('splashscreen', {}).update(compiled.get('plus', {}).get('splashscreen', {}))
+    tabbar = compiled.get('plus', {}).get('tabBar')
+    if tabbar is None and plus.get('tabBar'):
+        raise RuntimeError('Native tab routes removed: regenerate the HBuilderX runtime')
+    if tabbar is not None:
+        # A new native route topology still requires a matching runtime. Visual
+        # configuration and asset URLs must follow the current pages.json.
+        routes = lambda bar: [item['pagePath'] for item in bar.get('list', [])]
+        if not routes(tabbar) or routes(tabbar) != routes(plus.get('tabBar', {})):
+            raise RuntimeError('Native tab routes changed: regenerate the HBuilderX runtime')
+        plus.setdefault('tabBar', {}).update(deepcopy(tabbar))
+    return result
 
 
 def build(args):
@@ -49,9 +71,7 @@ def build(args):
         unsigned, aligned = work / 'unsigned.apk', work / 'aligned.apk'
         with ZipFile(runtime) as original:
             original_manifest = json.loads(original.read(prefix + 'manifest.json'))
-            if original_manifest['version'] != manifest['version']:
-                raise RuntimeError('Native version changed: regenerate and pin a matching HBuilderX runtime')
-            original_manifest['plus']['splashscreen'].update(manifest.get('plus', {}).get('splashscreen', {}))
+            original_manifest = merge_resource_manifest(original_manifest, manifest)
             updates = {prefix + p.relative_to(compiled).as_posix(): p.read_bytes() for p in compiled.rglob('*') if p.is_file()}
             updates[prefix + 'manifest.json'] = json.dumps(original_manifest, ensure_ascii=False, separators=(',', ':')).encode('utf-8')
             with ZipFile(unsigned, 'w') as destination:
@@ -87,6 +107,8 @@ def build(args):
             native = [n for n in before.namelist() if not n.startswith(prefix) and not n.startswith('META-INF/')]
             if any(before.read(n) != after.read(n) for n in native):
                 raise RuntimeError('Native runtime unexpectedly changed')
+            if json.loads(after.read(prefix + 'manifest.json')) != original_manifest:
+                raise RuntimeError('Compiled UI metadata was not preserved')
             for p in compiled.rglob('*'):
                 if p.is_file() and p.name != 'manifest.json':
                     assert after.read(prefix + p.relative_to(compiled).as_posix()) == p.read_bytes()

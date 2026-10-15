@@ -56,6 +56,9 @@ jobs:
       - name: 单元测试 + 集成测试
         run: node --import ./tests/support/register.mjs --test "tests/unit/*.test.mjs" "tests/integration/*.test.mjs"
 
+      - name: Android resource manifest regression
+        run: npm run test:android-package
+
       - name: H5 真实浏览器端到端测试
         run: node --test "tests/e2e/*.test.mjs"
         env:

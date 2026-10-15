@@ -11,6 +11,7 @@ npm ci
 npm test
 npm run audit:check
 npm run test:security
+npm run test:android-package
 npm run build:h5
 npm run build:app
 ```
@@ -53,7 +54,7 @@ npm run build:android -- --require-release
 
 当前原生版本为 1.0.0，延续原已安装 APK 的包名和签名。工程配置目标包名与原本地包的默认包名存在历史差异，脚本保留已安装身份。更改包名、AppID、原生版本、权限、插件、引擎或桌面图标时，先在 HBuilderX 使用原包名及原证书重新打包和真机验证，再发布新的运行壳资产，更新 `android-runtime.json` 的 URL / SHA-256 / 编译器版本及 npm 锁文件。AppID 或版本不匹配时脚本会拒绝构建。
 
-普通页面/业务资源更新可使用 `v1.0.0-ui.1` 等 Release 标签，原生显示版本仍为 1.0.0。
+普通页面/业务资源更新可使用 `v1.0.0-ui.1` 等 Release 标签，原生显示版本仍为 1.0.0。底栏的高度、字号、图标及颜色从本次编译清单同步到资源包中的 `plus.tabBar`，不能沿用运行壳里的旧值；原生引擎和安装身份保持不变。更换底栏路由或顺序时需生成配套运行壳，脚本会拒绝不一致的路由。底栏高清资源由 `assets/navigation/` 中的 SVG 母版通过 `node scripts/render-tabbar.mjs` 生成，网页与原生共用 `static/tabbar/soft-gradient/` 下的 144px 位图。
 
 ## GitHub Actions Releases 自动出包
 
@@ -84,6 +85,7 @@ python scripts/audit-question-bank.py
 python scripts/verify-assets.py
 python scripts/security-audit.py
 npm test
+npm run test:android-package
 npm run build:h5
 npm run test:e2e
 ```

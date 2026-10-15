@@ -297,6 +297,53 @@ button:focus-visible {
 	height: 23px;
 }
 
+/* #ifdef H5 */
+/* 继续由 uni-app 预留底栏高度/安全区，网页只增强材质与按压反馈。 */
+.uni-tabbar-bottom .uni-tabbar {
+	background-color: rgba(255, 255, 255, .97) !important;
+	box-shadow: 0 -4px 20px rgba(43, 64, 101, .07);
+	-webkit-backdrop-filter: blur(10px);
+	backdrop-filter: blur(10px);
+}
+
+.uni-tabbar-bottom .uni-tabbar-border {
+	background-color: rgba(100, 120, 153, .14) !important;
+}
+
+.uni-tabbar__item {
+	min-width: 0;
+	touch-action: manipulation;
+}
+
+.uni-tabbar__bd {
+	transition: transform 160ms ease;
+}
+
+.uni-tabbar__item:active .uni-tabbar__bd {
+	transform: scale(.95);
+}
+
+.uni-tabbar__icon img {
+	object-fit: contain;
+}
+
+.uni-tabbar__label {
+	font-weight: 600;
+	line-height: 18px !important;
+	white-space: nowrap;
+	letter-spacing: .04em;
+}
+
+html[data-np-appearance="dark"] .uni-tabbar-bottom .uni-tabbar {
+	background-color: #17212b !important;
+	box-shadow: 0 -4px 20px rgba(0, 0, 0, .18);
+}
+
+html[data-np-appearance="dark"] .uni-tabbar-bottom .uni-tabbar-border {
+	background-color: rgba(163, 183, 212, .18) !important;
+}
+/* #endif */
+
 @media (prefers-reduced-motion: reduce) {
 	* {
 		scroll-behavior: auto !important;

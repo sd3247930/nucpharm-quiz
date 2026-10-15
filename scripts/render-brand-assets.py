@@ -15,7 +15,7 @@
     static/brand/android/notification.png          通知栏单色图标（24dp@xxxhdpi）
     static/brand/splash/splash.png                 启动图（1024×1024，透明底居中）
     static/brand/splash/android-{hdpi,xhdpi,xxhdpi,xxxhdpi}.png  Android 竖屏启动图
-    static/tabbar/{home,study,exam,mistakes,me}{,-on}.png        底部导航图标（81×81）
+    static/tabbar/soft-gradient/{home,study,exam,mistakes,settings}{,-on,-dark-idle,-dark}.png 高清导航图标（144×144）
 
 用法：python scripts/render-brand-assets.py [--android-only|--tabbar-only]
 """
@@ -103,51 +103,9 @@ def quantize_png(path: Path, colors: int = 128) -> None:
     print(f"    ↳ 压缩 {before // 1024} KB → {after // 1024} KB")
 
 
-def icon_svg(kind: str, active: bool, dark: bool = False) -> str:
-    """底部导航图标：24×24 线性图标，未选中灰蓝、选中品牌青绿（同时用填充区分）。"""
-    color = ("#4FB99F" if dark else "#1A6B5A") if active else "#64748B"
-    fill = "none"
-    paths = {
-        "home": "<path d='M3 10.6 12 3l9 7.6'/><path d='M5.5 9.6V20h13V9.6'/><path d='M9.8 20v-5.2h4.4V20'/>",
-        "study": (
-            "<path d='M4 5.2A2.2 2.2 0 0 1 6.2 3H12v16H6.2A2.2 2.2 0 0 0 4 21.2Z'/>"
-            "<path d='M20 5.2A2.2 2.2 0 0 0 17.8 3H12v16h5.8A2.2 2.2 0 0 1 20 21.2Z'/>"
-        ),
-        "exam": (
-            "<path d='M6 3.5h9.5L19 7v13.5H6Z'/><path d='M15 3.5V7h4'/>"
-            "<path d='M9 11.5h7M9 15h5'/>"
-        ),
-        "mistakes": (
-            "<path d='M5 4.5h11a3 3 0 0 1 3 3v12H8a3 3 0 0 1-3-3Z'/>"
-            "<path d='M8.5 9.5l2 2 4-4'/>"
-        ),
-        "settings": "<path d='M9 3h6l.7 3 2.6 1.5 2.9-.9 3 5.2-2.2 2.1v3l2.2 2.1-3 5.2-2.9-.9L15.7 25l-.7 3H9l-.7-3-2.6-1.5-2.9.9-3-5.2L2 17.1v-3L-.2 12l3-5.2 2.9.9L8.3 6Z' transform='translate(3 0) scale(.75)'/><circle cx='12' cy='12' r='3.3'/>",
-        "me": "<circle cx='12' cy='8.4' r='3.7'/><path d='M4.6 20c1.2-3.6 4-5.4 7.4-5.4S18.2 16.4 19.4 20'/>",
-    }
-    active_extra = "" if active else ""
-    return (
-        "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='81' height='81' "
-        f"fill='{fill}' stroke='{color}' stroke-width='1.7' stroke-linecap='round' "
-        f"stroke-linejoin='round'>{paths[kind]}{active_extra}</svg>"
-    )
-
-
 def render_tabbar(browser: Path) -> None:
-    out_dir = ROOT / "static" / "tabbar"
-    out_dir.mkdir(parents=True, exist_ok=True)
-    for kind in ("home", "study", "exam", "mistakes", "settings"):
-        for active, dark in ((False,False),(True,False),(True,True)):
-            name = f"{kind}-on.png" if active else f"{kind}.png"
-            if dark: name = f"{kind}-dark.png"
-            svg = icon_svg(kind, active, dark)
-            html = (
-                "<!DOCTYPE html><html><head><meta charset='utf-8'>"
-                "<style>html,body{margin:0;padding:0;background:transparent;}"
-                "#wrap{width:81px;height:81px;display:flex;align-items:center;justify-content:center;}"
-                "#wrap svg{width:60px;height:60px;display:block;}</style></head>"
-                f"<body><div id='wrap'>{svg}</div></body></html>"
-            )
-            render(browser, html, out_dir / name, 81, 81)
+    """由独立 SVG 母版生成四种状态的高清图标，与原生/网页共用。"""
+    subprocess.run(["node", str(ROOT / "scripts" / "render-tabbar.mjs")], check=True)
 
 
 def main() -> int:
