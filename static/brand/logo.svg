@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  核药通 NucPharm · 主标志（Logo D 方案重绘）
+
+  构图（依据 private/NucPharm/Logo_D_Knowledge_Orbit.png 概念稿）：
+  圆角卡底 + 原子轨道环（蓝→青绿渐变笔触）+ 两个高光电子球 + 医疗十字 + 翻开的书本。
+  全图无文字、无字母、无水印，可编辑原生路径，可直接用于 Android 图标与网页端。
+
+  维护约定：本文件是唯一矢量源文件，任何尺寸的 PNG 都由
+  scripts/render-brand-assets.py 从这里重新渲染，不要直接改 PNG。
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 468 468" width="468" height="468" role="img" aria-label="核药通标志：知识之轨">
+  <defs>
+    <linearGradient id="npCard" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F9FCFD"/>
+      <stop offset="1" stop-color="#E3F0F8"/>
+    </linearGradient>
+    <linearGradient id="npRing" x1="0.05" y1="0.1" x2="0.95" y2="0.9">
+      <stop offset="0" stop-color="#3E8FD0"/>
+      <stop offset="0.5" stop-color="#2AA3C8"/>
+      <stop offset="1" stop-color="#18A98C"/>
+    </linearGradient>
+    <linearGradient id="npCross" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#33B983"/>
+      <stop offset="1" stop-color="#128F66"/>
+    </linearGradient>
+    <linearGradient id="npBookLeft" x1="0" y1="0" x2="0.8" y2="0.9">
+      <stop offset="0" stop-color="#25B79C"/>
+      <stop offset="1" stop-color="#128F6C"/>
+    </linearGradient>
+    <linearGradient id="npBookRight" x1="0.2" y1="0" x2="1" y2="0.9">
+      <stop offset="0" stop-color="#3E93CE"/>
+      <stop offset="1" stop-color="#1F6DAE"/>
+    </linearGradient>
+    <radialGradient id="npBallBlue" cx="0.32" cy="0.28" r="0.8">
+      <stop offset="0" stop-color="#9AD3F3"/>
+      <stop offset="0.55" stop-color="#2E86C1"/>
+      <stop offset="1" stop-color="#1F6DAE"/>
+    </radialGradient>
+    <radialGradient id="npBallTeal" cx="0.32" cy="0.28" r="0.8">
+      <stop offset="0" stop-color="#7DE3CB"/>
+      <stop offset="0.55" stop-color="#17A589"/>
+      <stop offset="1" stop-color="#0F8A70"/>
+    </radialGradient>
+  </defs>
+
+  <!-- 圆角卡底 -->
+  <rect x="20" y="10" width="428" height="448" rx="95" fill="url(#npCard)"/>
+
+  <!-- 原子轨道环（两道交叉椭圆，笔触式渐变色） -->
+  <g fill="none" stroke="url(#npRing)" stroke-linecap="round">
+    <ellipse cx="234" cy="168" rx="68" ry="110" stroke-width="13"/>
+    <ellipse cx="234" cy="184" rx="126" ry="54" stroke-width="13" transform="rotate(-18 234 184)"/>
+  </g>
+
+  <!-- 电子球 -->
+  <circle cx="106" cy="132" r="21" fill="url(#npBallBlue)"/>
+  <circle cx="334" cy="205" r="17" fill="url(#npBallTeal)"/>
+
+  <!-- 医疗十字 -->
+  <path d="M209 152 H234 V194 H274 V231 H234 V272 H209 V231 H168 V194 H209 Z" fill="url(#npCross)" stroke="url(#npCross)" stroke-width="10" stroke-linejoin="round"/>
+
+  <!-- 翻开的书本 -->
+  <path d="M70 246 C120 231 179 236 226 262 L226 402 C179 376 120 371 70 385 Z" fill="url(#npBookLeft)"/>
+  <path d="M382 246 C332 231 273 236 226 262 L226 402 C273 376 332 371 382 385 Z" fill="url(#npBookRight)"/>
+  <path d="M92 268 C132 258 176 262 212 281" fill="none" stroke="#FFFFFF" stroke-opacity="0.55" stroke-width="6" stroke-linecap="round"/>
+  <path d="M360 268 C320 258 276 262 240 281" fill="none" stroke="#FFFFFF" stroke-opacity="0.55" stroke-width="6" stroke-linecap="round"/>
+</svg>

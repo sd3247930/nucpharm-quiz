@@ -1,0 +1,134 @@
+{
+  "pages": [
+    {
+      "path": "pages/home/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "首页",
+        "backgroundColor": "#F7F9FC"
+      }
+    },
+    {
+      "path": "pages/study/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "练习",
+        "backgroundColor": "#F7F9FC"
+      }
+    },
+    {
+      "path": "pages/exam/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "考试",
+        "backgroundColor": "#F7F9FC"
+      }
+    },
+    {
+      "path": "pages/mistakes/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "错题",
+        "backgroundColor": "#F7F9FC"
+      }
+    },
+    {
+      "path": "pages/me/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "设置",
+        "backgroundColor": "#F7F9FC"
+      }
+    },
+    {
+      "path": "pages/question/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "答题",
+        "backgroundColor": "#F7F9FC"
+      }
+    },
+    {
+      "path": "pages/exam-session/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "考试进行中",
+        "backgroundColor": "#F7F9FC",
+        "disableScroll": true
+      }
+    },
+    {
+      "path": "pages/exam-result/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "考试成绩",
+        "backgroundColor": "#F7F9FC"
+      }
+    },
+    {
+      "path": "pages/exam-review/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "试卷复盘",
+        "backgroundColor": "#F7F9FC"
+      }
+    },
+    {
+      "path": "pages/settings/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "设置",
+        "backgroundColor": "#F7F9FC"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "核药通",
+    "navigationBarBackgroundColor": "#FFFFFF",
+    "backgroundColor": "#F7F9FC"
+  },
+  "tabBar": {
+    "color": "#7A8A99",
+    "selectedColor": "#1A6B5A",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "fontSize": "10px",
+    "iconWidth": "22px",
+    "spacing": "3px",
+    "height": "52px",
+    "list": [
+      {
+        "pagePath": "pages/home/index",
+        "text": "首页",
+        "iconPath": "static/tabbar/home.png",
+        "selectedIconPath": "static/tabbar/home-on.png"
+      },
+      {
+        "pagePath": "pages/study/index",
+        "text": "练习",
+        "iconPath": "static/tabbar/study.png",
+        "selectedIconPath": "static/tabbar/study-on.png"
+      },
+      {
+        "pagePath": "pages/exam/index",
+        "text": "考试",
+        "iconPath": "static/tabbar/exam.png",
+        "selectedIconPath": "static/tabbar/exam-on.png"
+      },
+      {
+        "pagePath": "pages/mistakes/index",
+        "text": "错题",
+        "iconPath": "static/tabbar/mistakes.png",
+        "selectedIconPath": "static/tabbar/mistakes-on.png"
+      },
+      {
+        "pagePath": "pages/settings/index",
+        "text": "设置",
+        "iconPath": "static/tabbar/settings.png",
+        "selectedIconPath": "static/tabbar/settings-on.png"
+      }
+    ]
+  },
+  "uniIdRouter": {}
+}

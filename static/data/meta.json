@@ -1,0 +1,202 @@
+{
+ "bankId": "nucpharm-radiopharmacy-620",
+ "bankVersion": "1.0.0",
+ "bankName": "放射性药品题库（620 题）",
+ "generatedAt": "2026-10-15 02:58:33 +0800",
+ "counts": {
+  "total": 620,
+  "single": 400,
+  "multiple": 110,
+  "boolean": 110
+ },
+ "examQuota": {
+  "single": {
+   "count": 40,
+   "points": 1
+  },
+  "multiple": {
+   "count": 10,
+   "points": 2
+  },
+  "boolean": {
+   "count": 20,
+   "points": 2
+  }
+ },
+ "examDurationMinutes": 60,
+ "examTotalPoints": 100,
+ "examPool": {
+  "single": 400,
+  "multiple": 110,
+  "boolean": 110
+ },
+ "examExcluded": [],
+ "needsReview": [
+  {
+   "id": "RP-M-0092",
+   "note": "源文件标注为多选题，但正确答案只有 ['A']（A）"
+  }
+ ],
+ "duplicateGroups": [
+  {
+   "kind": "跨题型重复",
+   "ids": [
+    "RP-S-0014",
+    "RP-M-0108"
+   ],
+   "stem": "正电子类放射性药品的核心特征是（ ）"
+  },
+  {
+   "kind": "同题型重复",
+   "ids": [
+    "RP-M-0019",
+    "RP-M-0088"
+   ],
+   "stem": "放射性药品生产设备的要求包括（ ）"
+  },
+  {
+   "kind": "同题型重复",
+   "ids": [
+    "RP-M-0051",
+    "RP-M-0082"
+   ],
+   "stem": "放射性药品留样的要求包括（ ）"
+  },
+  {
+   "kind": "同题型重复",
+   "ids": [
+    "RP-M-0054",
+    "RP-M-0110"
+   ],
+   "stem": "放射性药品生产中“防止交叉污染”的措施包括（ ）"
+  }
+ ],
+ "judgementDedupeFixes": [
+  {
+   "id": "RP-B-0041",
+   "oldStem": "γ谱仪法鉴别核素时，测得光子能量与固有能量误差在±10keV或±6%范围内（取较大者），可判断为同一种核素。（ ）",
+   "newStem": "放射性药品的产品检验仅需进行使用前检验，无需追溯性检验。（ ）",
+   "oldAnswer": [
+    "A"
+   ],
+   "newAnswer": [
+    "B"
+   ]
+  },
+  {
+   "id": "RP-B-0042",
+   "oldStem": "放射性核纯度测定中，所有核素均可用碘化钠探测器，无需高纯锗探测器。（ ）",
+   "newStem": "碘[125I]密封籽源稳定性考察可使用留样，无需单独留存稳定性样品。（ ）",
+   "oldAnswer": [
+    "B"
+   ],
+   "newAnswer": [
+    "B"
+   ]
+  }
+ ],
+ "crossCheck": {
+  "matched": 619,
+  "formatOnly": [
+   "RP-M-0034"
+  ],
+  "stemMismatch": [],
+  "optionMismatch": [],
+  "answerMismatch": [],
+  "examOnly": [],
+  "richOnly": []
+ },
+ "sources": [
+  {
+   "file": "单选题1-400.md",
+   "role": "主题库（练习）",
+   "bytes": 441358,
+   "questions": 400,
+   "sha256": "6bcd8be2be536fc8d45a6b360c6f605aaa08f112312df54f24901ab021804da5"
+  },
+  {
+   "file": "多选题1-110.md",
+   "role": "主题库（练习）",
+   "bytes": 140484,
+   "questions": 110,
+   "sha256": "e923b32333702f18622a4c5ea450c879d88362c4b0fd0f47680b4daac00dda57"
+  },
+  {
+   "file": "判断题1-110.md",
+   "role": "主题库（练习）",
+   "bytes": 105150,
+   "questions": 110,
+   "sha256": "11450dd6c5129aaf8a1adf64b2fe5c13f52eca1f394aa2d7427187e55a89f436"
+  },
+  {
+   "file": "单选题.md",
+   "role": "考试库",
+   "bytes": 60377,
+   "questions": 400,
+   "sha256": "69d77cd55013e8dc5720201d64af83fb7407f0db7ba628fad791f602ebfb7016"
+  },
+  {
+   "file": "多选题.md",
+   "role": "考试库",
+   "bytes": 24286,
+   "questions": 110,
+   "sha256": "9d6b9455d96c9ae2a0e5865a1df55c728a9e6e3d4a6298641b14685483067c70"
+  },
+  {
+   "file": "判断题.md",
+   "role": "考试库",
+   "bytes": 12999,
+   "questions": 110,
+   "sha256": "282019a388a3004e458de2daf776306d2d25a797c6be04b9795f1eadcd1f6c9d"
+  },
+  {
+   "file": "最终题库.docx",
+   "role": "原始汇总（参考，不参与解析）",
+   "bytes": 100554,
+   "questions": 0,
+   "sha256": "fd9b28f30aa830593d95bbf646d91a15421567c2fc2c4f61a0c21c5cf12143c8"
+  }
+ ],
+ "files": {
+  "questions": "static/data/questions.json",
+  "examBank": "static/data/exam-bank.json"
+ },
+ "anomalies": {
+  "源文件勾选标记与答案不一致（以粗体答案为准）": {
+   "count": 2,
+   "sample": "RP-S-0055 选项勾选 ['D'] vs 粗体答案 ['C']；粗体答案已与考试库源独立核对"
+  },
+  "题干噪声行": {
+   "count": 1,
+   "sample": "RP-S-0226 忽略噪声行：-"
+  },
+  "选项行重复": {
+   "count": 2,
+   "sample": "RP-M-0027 选项 E 连续/重复出现，已去重"
+  },
+  "已修复重复题": {
+   "count": 2,
+   "sample": "RP-B-0041 RP-B-0041：原与重复题同文，按考试库源替换为「放射性药品的产品检验仅需进行使用前检验，无需追溯性检验。（ …」"
+  },
+  "多选题答案不足两个": {
+   "count": 1,
+   "sample": "RP-M-0092 答案 ['A']"
+  },
+  "跨题型重复": {
+   "count": 1,
+   "sample": "RP-S-0014 RP-S-0014、RP-M-0108：正电子类放射性药品的核心特征是（ ）"
+  },
+  "同题型重复": {
+   "count": 3,
+   "sample": "RP-M-0019 RP-M-0019、RP-M-0088：放射性药品生产设备的要求包括（ ）"
+  },
+  "仅格式差异（采用主题库写法）": {
+   "count": 1,
+   "sample": "RP-M-0034 选项数字/上标写法不同，主题库写作：锝[99mTc]活度计范围3.7×10⁵～3.7×10¹⁰ Bq"
+  },
+  "分卷与合并库题干不一致": {
+   "count": 2,
+   "sample": "RP-B-0041 41-50.md 第 41 题：γ谱仪法鉴别核素时，测得光子能量与固有能量误差在±10keV或±6%范围内（取较… / 合并库：放射性药品的产品检验仅需进行使用前检验，无需追溯性检验。（ ）…"
+  }
+ }
+}

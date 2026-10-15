@@ -1,0 +1,8 @@
+{
+  "url": "https://github.com/sd3247930/nucpharm-quiz/releases/download/android-runtime-1.0.0/NucPharm-runtime.apk",
+  "sha256": "48982324b576452e1533c9db5e3d30ed2f104d7dad3b94cc4aeb303a8a2464b8",
+  "appid": "__UNI__F9EA60D",
+  "nativeVersion": "1.0.0",
+  "compilerVersion": "3.0.0-alpha-5020520260821001",
+  "note": "Verified HBuilderX native runtime. Updating native settings, permissions, app id or native version requires a new runtime."
+}

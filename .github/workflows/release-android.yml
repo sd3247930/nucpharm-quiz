@@ -1,0 +1,78 @@
+name: Android Release
+on:
+  push:
+    tags: ['v*']
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag, e.g. v1.0.0 or v1.0.0-ui.1'
+        required: true
+        default: v1.0.0
+permissions:
+  contents: read
+concurrency:
+  group: android-release-${{ github.event.release.tag_name || inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+jobs:
+  package:
+    if: github.event_name != 'release' || !startsWith(github.event.release.tag_name, 'android-runtime-')
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name || inputs.tag || github.ref }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: npm ci --no-fund
+      - name: Verify source and run core tests
+        run: |
+          python scripts/security-audit.py
+          npm test
+      - run: npm run build:app
+      - name: Download pinned native runtime
+        run: |
+          mkdir -p "$RUNNER_TEMP/nucpharm"
+          python -c 'import json,os,urllib.request; c=json.load(open("android-runtime.json")); urllib.request.urlretrieve(c["url"],os.environ["RUNNER_TEMP"]+"/nucpharm/runtime.apk")'
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" 'build-tools;36.0.0'
+      - name: Sign and verify APK
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+        run: |
+          python -c 'import base64,os,pathlib; p=pathlib.Path(os.environ["RUNNER_TEMP"])/"nucpharm/release.keystore"; p.write_bytes(base64.b64decode(os.environ["ANDROID_KEYSTORE_BASE64"],validate=True)); p.chmod(0o600)'
+          export ANDROID_KEYSTORE="$RUNNER_TEMP/nucpharm/release.keystore"
+          python scripts/package-android.py --runtime "$RUNNER_TEMP/nucpharm/runtime.apk" --build-tools "$ANDROID_HOME/build-tools/36.0.0" --require-release
+      - name: Upload only signed distributable
+        uses: actions/upload-artifact@v4
+        with:
+          name: NucPharm-Android
+          path: |
+            unpackage/releases/NucPharm.apk
+            unpackage/releases/NucPharm.apk.sha256
+          if-no-files-found: error
+          retention-days: 14
+      - name: Publish Release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag || github.ref_name }}
+        run: |
+          [[ "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+([.-][A-Za-z0-9.-]+)?$ ]] || exit 1
+          gh release view "$RELEASE_TAG" >/dev/null 2>&1 || gh release create "$RELEASE_TAG" --verify-tag --title "核药通 $RELEASE_TAG" --notes-file RELEASE_NOTES.md
+          gh release upload "$RELEASE_TAG" unpackage/releases/NucPharm.apk unpackage/releases/NucPharm.apk.sha256 --clobber

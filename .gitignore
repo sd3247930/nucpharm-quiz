@@ -1,0 +1,49 @@
+# ---- 依赖与构建产物 ----
+node_modules/
+__pycache__/
+*.py[cod]
+unpackage/
+dist/
+build/
+.render/
+
+# ---- 私密与仅本地内容（严禁提交）----
+private/
+private-archive/
+docs/
+test-report.md
+.env
+.env.*
+*.keystore
+*.jks
+*.p12
+*.pfx
+*.pem
+*.key
+*.apk
+*.wgt
+*.db
+*.sqlite
+*.sqlite3
+
+# ---- 调试与临时文件 ----
+*.log
+logs/
+*.tmp
+*.temp
+*.bak
+*.orig
+*.rej
+*.zip
+docs/screenshots/
+docs/android-logcat.txt
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---- 编辑器 / IDE ----
+.hbuilderx/
+.idea/
+.vscode/
+*.suo
+*.user

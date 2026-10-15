@@ -1,0 +1,57 @@
+name: validate
+
+# 仅验证已提交题库，绝不重新导入私有题源；先构建 H5，再执行真实浏览器测试。
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 安装 Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: 安装 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: 安装 Python 依赖（仅用于资产校验的 Pillow）
+        run: python -m pip install --upgrade pip pillow
+
+      - run: npm ci --no-fund
+
+      - run: npm run build:h5
+
+      - name: Prepare ignored test report directory
+        run: mkdir -p docs/reports
+
+      - name: 题库独立校验（620/400/110/110、字段合法性、考试库一致性）
+        run: python scripts/audit-question-bank.py
+
+      - name: 品牌资产与数据产物校验
+        run: python scripts/verify-assets.py
+
+      - name: 安全与纯净度自查（敏感信息 / 本地路径 / 临时文件 / private 泄漏）
+        run: python scripts/security-audit.py
+
+      - name: 单元测试 + 集成测试
+        run: node --import ./tests/support/register.mjs --test "tests/unit/*.test.mjs" "tests/integration/*.test.mjs"
+
+      - name: H5 端到端测试（有构建产物时执行，否则自动跳过）
+        run: node --test "tests/e2e/*.test.mjs"
+        env:
+          CHROME_PATH: /usr/bin/google-chrome
