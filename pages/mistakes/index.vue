@@ -82,7 +82,7 @@ export default {
 				times: store.state.mistakes[q.id]?.n || 1,
 				hasNote: !!store.noteOf(q.id),
 				answerText: answerText(q.answer),
-				source: q.source?.file ? q.source.file + ' · ' + q.source.location : '暂无来源信息',
+				source: q.source?.location ? TYPE_LABEL[q.type] + ' ' + q.source.location : '暂无来源信息',
 				tagClass: 'np-tag-' + q.type
 			}))
 		},

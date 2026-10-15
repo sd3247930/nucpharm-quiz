@@ -64,7 +64,10 @@ export default {
 	},
 	methods: {
 		goBack() {
-			if (getCurrentPages().length > 1) uni.navigateBack();
+			if (getCurrentPages().length > 1) uni.navigateBack({
+				// 页面弹层可通过 onBackPress 拦截本次返回。
+				fail() {}
+			});
 			else uni.switchTab({
 				url: '/pages/home/index'
 			})

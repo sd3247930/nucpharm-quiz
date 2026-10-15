@@ -34,6 +34,8 @@ jobs:
 
       - run: npm ci --no-fund
 
+      - run: npm run version:check
+
       - name: Dependency audit and security regression
         run: |
           npm run audit:check

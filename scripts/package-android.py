@@ -1,8 +1,8 @@
 """Build a signed APK from compiled uni-app resources and a verified native runtime.
 
-Native code, AndroidManifest and launcher icons come from the pinned runtime APK.
+Native code, permissions and launcher icons come from the pinned runtime APK.
 Compiled splash/tab-bar UI metadata follows the resource build; engine or native
-identity changes still require HBuilderX.
+identity changes still require HBuilderX. Only version attributes are patched.
 Passwords are accepted only through environment variables and never printed.
 """
 import argparse
@@ -16,6 +16,7 @@ import shutil
 import subprocess
 import tempfile
 from zipfile import ZipFile
+from android_version import patch_android_version, patch_control_version, validate_version
 
 
 def run(command):
@@ -28,9 +29,13 @@ def run(command):
 
 def merge_resource_manifest(original, compiled):
     """Update compiled UI metadata while keeping the pinned runtime's identity/config."""
-    if original['id'] != compiled['id'] or original['version'] != compiled['version']:
-        raise RuntimeError('Native identity/version changed: regenerate the HBuilderX runtime')
+    if original['id'] != compiled['id']:
+        raise RuntimeError('Native identity changed: regenerate the HBuilderX runtime')
+    validate_version(compiled['version'])
+    if int(compiled['version']['code']) < int(original['version']['code']):
+        raise RuntimeError('Android version code cannot decrease')
     result = deepcopy(original)
+    result['version'] = deepcopy(compiled['version'])
     plus = result['plus']
     plus.setdefault('splashscreen', {}).update(compiled.get('plus', {}).get('splashscreen', {}))
     tabbar = compiled.get('plus', {}).get('tabBar')
@@ -74,6 +79,11 @@ def build(args):
             original_manifest = merge_resource_manifest(original_manifest, manifest)
             updates = {prefix + p.relative_to(compiled).as_posix(): p.read_bytes() for p in compiled.rglob('*') if p.is_file()}
             updates[prefix + 'manifest.json'] = json.dumps(original_manifest, ensure_ascii=False, separators=(',', ':')).encode('utf-8')
+            version_updates = {
+                'AndroidManifest.xml': patch_android_version(original.read('AndroidManifest.xml'), manifest['version']),
+                'assets/data/dcloud_control.xml': patch_control_version(original.read('assets/data/dcloud_control.xml'), manifest['id'], manifest['version']['name'])
+            }
+            updates.update(version_updates)
             with ZipFile(unsigned, 'w') as destination:
                 for entry in original.infolist():
                     if re.fullmatch(r'META-INF/(?:[^/]+\.(?:SF|RSA|DSA|EC)|MANIFEST\.MF)', entry.filename, re.I):
@@ -103,9 +113,17 @@ def build(args):
         if release and cert(output) != expected_cert:
             raise RuntimeError('Signing identity differs from runtime; this cannot update existing installs')
         run([sdk / ('zipalign' + suffix), '-c', '-P', '16', '4', output])
+        # Independently parse the final binary manifest with Android's own tool.
+        aapt = sdk / ('aapt2' + suffix)
+        package_pattern = r"package: name='([^']+)' versionCode='([^']+)' versionName='([^']+)'"
+        base_info = re.search(package_pattern, run([aapt, 'dump', 'badging', runtime]))
+        final_info = re.search(package_pattern, run([aapt, 'dump', 'badging', output]))
+        expected = (base_info[1], str(manifest['version']['code']), manifest['version']['name']) if base_info else None
+        if not final_info or final_info.groups() != expected:
+            raise RuntimeError('Final APK package/version verification failed')
         with ZipFile(runtime) as before, ZipFile(output) as after:
             native = [n for n in before.namelist() if not n.startswith(prefix) and not n.startswith('META-INF/')]
-            if any(before.read(n) != after.read(n) for n in native):
+            if any(version_updates.get(n, before.read(n)) != after.read(n) for n in native):
                 raise RuntimeError('Native runtime unexpectedly changed')
             if json.loads(after.read(prefix + 'manifest.json')) != original_manifest:
                 raise RuntimeError('Compiled UI metadata was not preserved')
@@ -114,7 +132,7 @@ def build(args):
                     assert after.read(prefix + p.relative_to(compiled).as_posix()) == p.read_bytes()
         digest = hashlib.sha256(output.read_bytes()).hexdigest()
         output.with_name(output.name + '.sha256').write_text(f'{digest}  {output.name}\n', encoding='utf-8')
-        print(json.dumps({'status': 'PASS', 'file': output.name, 'sha256': digest, 'releaseSigned': release, 'nativeRuntimePreserved': True, 'allCompiledResourcesVerified': True}))
+        print(json.dumps({'status': 'PASS', 'file': output.name, 'version': manifest['version'], 'sha256': digest, 'releaseSigned': release, 'nativeRuntimePreserved': True, 'allCompiledResourcesVerified': True}))
 
 
 if __name__ == '__main__':

@@ -3,9 +3,23 @@
 		<app-header :title="modeLabel" :subtitle="subtitle" show-back :right-text="favorite ? '已收藏' : '收藏'"
 			@right="toggleFav" />
 
-		<scroll-view class="scroll" scroll-y :scroll-top="scrollTop">
+		<scroll-view class="scroll" :scroll-y="!lawVisible" :scroll-top="scrollTop">
 			<view class="wrap">
 				<template v-if="question">
+					<view class="np-card practice-tools">
+						<view class="explanation-control">
+							<view class="control-copy">
+								<text class="control-title">试题详解</text>
+								<text class="control-hint">作答后显示解析</text>
+							</view>
+							<switch class="explanation-switch" :checked="explanationOpen" :color="switchColor"
+								aria-label="显示试题详解" @change="onExplanationChange" />
+						</view>
+						<button class="law-trigger" role="button" tabindex="0" aria-label="查看本题法规" aria-haspopup="dialog"
+							:aria-expanded="lawVisible" @tap="openLaw" @keydown.enter.prevent="openLaw"
+							@keydown.space.prevent="openLaw">法规</button>
+					</view>
+
 					<question-card :question="question" :index="index" :total="total">
 						<view class="options">
 							<answer-option v-for="opt in question.options" :key="opt.key" :option="opt"
@@ -32,43 +46,43 @@
 					</question-card>
 
 					<!-- 解析 -->
-					<view v-if="revealed" class="np-card-flat analysis">
-						<view class="analysis-head" @tap="toggleExplanation">
+					<view v-if="revealed && explanationOpen" class="np-card-flat analysis">
+						<view class="analysis-head">
 							<text class="analysis-title">试题详解</text>
-							<text class="analysis-toggle">{{ explanationOpen ? '收起' : '展开' }}</text>
 						</view>
-						<template v-if="explanationOpen">
-							<text class="analysis-body">{{ question.explanation || '题库中本题暂无经核验的解析。' }}</text>
-							<template v-if="question.law">
-								<view class="np-divider analysis-divider"></view>
-								<text class="analysis-title">相关法规条文</text>
-								<text class="analysis-body">{{ question.law }}</text>
-							</template>
-							<view class="np-divider analysis-divider"></view>
-							<text class="analysis-src">
-								题源：{{ question.source.file }} · {{ question.source.location }}
-							</text>
-						</template>
+						<text class="analysis-body">{{ question.explanation || '题库中本题暂无经核验的解析。' }}</text>
+						<view class="np-divider analysis-divider"></view>
+						<text class="analysis-src">题源：{{ questionSource }}</text>
 					</view>
 
 					<!-- 笔记 -->
-					<view class="np-card-flat note-card">
-						<view class="analysis-head" @tap="toggleNote">
-							<text class="analysis-title">我的笔记</text>
-							<text class="analysis-toggle">{{ noteEditing ? '收起' : note ? '编辑' : '添加' }}</text>
+					<view class="np-card note-card">
+						<view class="analysis-head note-head" @tap="toggleNote">
+							<view class="note-heading">
+								<text class="analysis-title note-title">我的笔记</text>
+								<text class="note-subtitle">记录错因，梳理易混点</text>
+							</view>
+							<text class="analysis-toggle note-toggle">{{ noteEditing ? '收起' : note ? '编辑' : '添加' }}</text>
 						</view>
-						<template v-if="noteEditing">
-							<textarea v-model="noteText" class="note-area" placeholder="记录错因、易混点（保存在本机，不上传）"
+						<view v-if="noteEditing" class="note-editor">
+							<textarea v-model="noteText" class="note-area" placeholder="记录本题错因、易混点或复习要点"
 								:maxlength="2000" @focus="onFocus" @blur="onBlur" />
+							<view class="note-editor-meta">
+								<text>仅保存在本机</text>
+								<text class="note-count">{{ noteText.length }} / 2000</text>
+							</view>
 							<view class="note-actions">
-								<view class="np-btn np-btn-plain note-btn" @tap="saveNote"><text>保存笔记</text>
+								<view class="np-btn np-btn-primary note-btn" @tap="saveNote"><text>保存笔记</text>
 								</view>
 							</view>
-						</template>
-						<template v-else>
-							<text v-if="note" class="analysis-body">{{ note }}</text>
-							<text v-else class="analysis-empty">暂无笔记</text>
-						</template>
+						</view>
+						<view v-else-if="note" class="note-preview">
+							<text class="note-content">{{ note }}</text>
+						</view>
+						<view v-else class="note-empty">
+							<text class="note-empty-title">暂无笔记</text>
+							<text class="note-empty-hint">点击“添加”，记录本题的复习要点。</text>
+						</view>
 					</view>
 
 					<view class="tail-pad"></view>
@@ -102,6 +116,8 @@
 
 		<question-navigator :visible="navigatorVisible" title="答题卡" mode="practice" :items="navItems"
 			:current-id="question ? question.id : ''" @close="navigatorVisible = false" @jump="jumpTo" />
+		<law-dialog :visible="lawVisible" :content="question ? question.law || '' : ''"
+			:source="questionSource" @close="closeLaw" />
 	</view>
 </template>
 
@@ -111,6 +127,7 @@ import AppHeader from '../../components/AppHeader.vue'
 import QuestionCard from '../../components/QuestionCard.vue'
 import AnswerOption from '../../components/AnswerOption.vue'
 import QuestionNavigator from '../../components/QuestionNavigator.vue'
+import LawDialog from '../../components/LawDialog.vue'
 import {
 	PRACTICE_MODE,
 	PRACTICE_MODE_LABEL,
@@ -135,7 +152,8 @@ export default {
 		AppHeader,
 		QuestionCard,
 		AnswerOption,
-		QuestionNavigator
+		QuestionNavigator,
+		LawDialog
 	},
 	data() {
 		return {
@@ -146,6 +164,7 @@ export default {
 			isRight: false,
 			navigatorVisible: false,
 			explanationOpen: true,
+			lawVisible: false,
 			noteEditing: false,
 			noteText: '',
 			scrollTop: 0,
@@ -165,6 +184,14 @@ export default {
 		},
 		question() {
 			return this.list[this.index] || null
+		},
+		questionSource() {
+			if (!this.question) return ''
+			return [TYPE_LABEL[this.question.type] || this.question.qtype, this.question.source?.location]
+				.filter(Boolean).join(' ')
+		},
+		switchColor() {
+			return store.state.settings.appearance === 'dark' ? '#4FB99F' : '#1A6B5A'
 		},
 		total() {
 			return this.list.length
@@ -230,10 +257,17 @@ export default {
 	},
 	onHide() {
 		this.cancelAutoNext()
+		this.lawVisible = false
 		this.persistCursor()
 	},
 	onShow() {
 		this.noteText = this.note
+		this.explanationOpen = store.state.settings.showExplanation === 'immediate'
+	},
+	onBackPress() {
+		if (!this.lawVisible) return false
+		this.closeLaw()
+		return true
 	},
 	methods: {
 		answerText,
@@ -246,6 +280,7 @@ export default {
 			this.isRight = false
 			this.noteText = q ? store.noteOf(q.id) : ''
 			this.noteEditing = false
+			this.lawVisible = false
 			this.explanationOpen = store.state.settings.showExplanation === 'immediate'
 			this.scrollTop = this.scrollTop === 0 ? 0.01 : 0
 			if (!q) return
@@ -260,9 +295,17 @@ export default {
 			if (this.autoNextTimer) clearTimeout(this.autoNextTimer);
 			this.autoNextTimer = null
 		},
-		toggleExplanation() {
-			this.cancelAutoNext();
-			this.explanationOpen = !this.explanationOpen
+		onExplanationChange(event) {
+			this.cancelAutoNext()
+			this.explanationOpen = !!event.detail.value
+			store.setSettings({ showExplanation: this.explanationOpen ? 'immediate' : 'afterSubmit' })
+		},
+		openLaw() {
+			this.cancelAutoNext()
+			if (this.question) this.lawVisible = true
+		},
+		closeLaw() {
+			this.lawVisible = false
 		},
 		persistCursor() {
 			if (!this.practice || !this.list.length) return
@@ -389,6 +432,62 @@ export default {
 	padding: 8rpx 32rpx 0;
 }
 
+.practice-tools {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 12px;
+	margin-bottom: 12px;
+}
+
+.explanation-control {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.control-copy {
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.control-title {
+	color: var(--np-text);
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 1.5;
+}
+
+.control-hint {
+	color: var(--np-text-2);
+	font-size: 12px;
+	line-height: 1.5;
+}
+
+.explanation-switch {
+	flex-shrink: 0;
+}
+
+.law-trigger {
+	flex-shrink: 0;
+	min-width: 64px;
+	min-height: 44px;
+	margin: 0;
+	padding: 10px 14px;
+	border: 1px solid var(--np-border);
+	border-radius: 10px;
+	background-color: var(--np-primary-soft);
+	color: var(--np-primary);
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 1.5;
+}
+
 .options {
 	margin-top: 32rpx;
 }
@@ -422,8 +521,7 @@ export default {
 	margin-top: 6rpx;
 }
 
-.analysis,
-.note-card {
+.analysis {
 	margin-top: 24rpx;
 	padding: 24rpx;
 }
@@ -453,13 +551,6 @@ export default {
 	margin-top: 14rpx;
 }
 
-.analysis-empty {
-	display: block;
-	font-size: 24rpx;
-	color: var(--np-text-3);
-	margin-top: 12rpx;
-}
-
 .analysis-divider {
 	margin: 20rpx 0 12rpx;
 }
@@ -471,29 +562,134 @@ export default {
 	margin-top: 4rpx;
 }
 
+.note-card {
+	margin-top: 16px;
+	padding: 16px;
+}
+
+.note-head {
+	min-height: 44px;
+	gap: 12px;
+}
+
+.note-heading {
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.note-title {
+	font-size: 16px;
+	line-height: 1.5;
+	font-weight: 700;
+}
+
+.note-subtitle {
+	font-size: 12px;
+	line-height: 1.6;
+	color: var(--np-text-2);
+}
+
+.note-toggle {
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 36px;
+	padding: 6px 12px;
+	box-sizing: border-box;
+	border-radius: 8px;
+	background-color: var(--np-primary-soft);
+	font-size: 13px;
+	line-height: 1.5;
+	white-space: nowrap;
+}
+
+.note-editor,
+.note-preview,
+.note-empty {
+	margin-top: 16px;
+}
+
+.note-preview,
+.note-empty {
+	padding: 14px 16px;
+	border-radius: 10px;
+	background-color: var(--np-surface-2);
+}
+
+.note-content {
+	display: block;
+	font-size: calc(14px * var(--np-fs-scale, 1));
+	line-height: 1.8;
+	color: var(--np-text-2);
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+}
+
+.note-empty-title,
+.note-empty-hint {
+	display: block;
+	color: var(--np-text-2);
+	line-height: 1.7;
+}
+
+.note-empty-title {
+	font-size: 14px;
+	font-weight: 500;
+}
+
+.note-empty-hint {
+	margin-top: 4px;
+	font-size: 12px;
+}
+
 .note-area {
 	width: 100%;
-	height: 200rpx;
+	height: 160px;
 	background-color: var(--np-surface-2);
-	border-radius: 16rpx;
-	margin-top: 16rpx;
-	padding: 20rpx;
+	border: 1px solid var(--np-border);
+	border-radius: 10px;
+	padding: 14px 16px;
 	font-size: calc(14px * var(--np-fs-scale, 1));
+	line-height: 1.8;
 	color: var(--np-text);
 	box-sizing: border-box;
 }
 
+.note-area:focus-within {
+	border-color: var(--np-primary);
+}
+
+.note-editor-meta {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	margin-top: 8px;
+	font-size: 12px;
+	line-height: 1.6;
+	color: var(--np-text-2);
+}
+
+.note-count {
+	flex-shrink: 0;
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+}
+
 .note-actions {
 	display: flex;
-	justify-content: flex-end;
-	margin-top: 16rpx;
+	margin-top: 16px;
 }
 
 .note-btn {
-	height: 72rpx;
-	font-size: 26rpx;
-	padding: 0 32rpx;
-	border-radius: 16rpx;
+	width: 100%;
+	min-height: 48px;
+	font-size: 15px;
+	padding: 12px 16px;
+	border-radius: 10px;
 }
 
 .tail-pad {

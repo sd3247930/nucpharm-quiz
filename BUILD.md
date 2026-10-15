@@ -52,9 +52,25 @@ npm run build:android -- --require-release
 
 自动 APK 流程是 **编译业务资源 → 复用已验证原生壳 → 正式签名**，并不重新编译 DCloud 原生引擎。[DCloud CLI](https://uniapp.dcloud.net.cn/worktile/CLI.html) 的 App 输出是业务资源，不能单独生成原生 APK。每次均重新编译业务资源和全部页面 CSS；运行壳提供当前高清桌面图标及启动配置。
 
-当前原生版本为 1.0.0，延续原已安装 APK 的包名和签名。工程配置目标包名与原本地包的默认包名存在历史差异，脚本保留已安装身份。更改包名、AppID、原生版本、权限、插件、引擎或桌面图标时，先在 HBuilderX 使用原包名及原证书重新打包和真机验证，再发布新的运行壳资产，更新 `android-runtime.json` 的 URL / SHA-256 / 编译器版本及 npm 锁文件。AppID 或版本不匹配时脚本会拒绝构建。
+原生运行壳基线为 1.0.0，延续原已安装 APK 的包名和签名。工程配置目标包名与原本地包的默认包名存在历史差异，脚本保留已安装身份。更改包名、AppID、权限、插件、引擎或桌面图标时，先在 HBuilderX 使用原包名及原证书重新打包和真机验证，再发布新的运行壳资产，更新 `android-runtime.json` 的 URL / SHA-256 / 编译器版本及 npm 锁文件。
 
-普通页面/业务资源更新可使用 `v1.0.0-ui.1` 等 Release 标签，原生显示版本仍为 1.0.0。底栏的高度、字号、图标及颜色从本次编译清单同步到资源包中的 `plus.tabBar`，不能沿用运行壳里的旧值；原生引擎和安装身份保持不变。更换底栏路由或顺序时需生成配套运行壳，脚本会拒绝不一致的路由。底栏高清资源由 `assets/navigation/` 中的 SVG 母版通过 `node scripts/render-tabbar.mjs` 生成，网页与原生共用 `static/tabbar/soft-gradient/` 下的 144px 位图。
+普通页面/业务更新使用独立递增的发布版本。打包脚本仅更新 AndroidManifest 的 `versionName` / `versionCode`、DCloud 启动清单的 `appver` 和业务资源版本，使用 Android SDK 的 `aapt2` 独立核对最终 APK 包名与版本。二进制 XML 格式依据 [AOSP ResourceTypes.h](https://android.googlesource.com/platform/frameworks/base/+/refs/heads/main/libs/androidfw/include/androidfw/ResourceTypes.h)。原生代码、权限、图标和其余配置逐字节校验，正式证书保持一致；拒绝版本码倒退或 AppID 不匹配。
+
+底栏的高度、字号、图标及颜色从本次编译清单同步到资源包中的 `plus.tabBar`。更换底栏路由或顺序时需生成配套运行壳，脚本会拒绝不一致的路由。底栏高清资源由 `assets/navigation/` 中的 SVG 母版通过 `node scripts/render-tabbar.mjs` 生成，网页与原生共用 `static/tabbar/soft-gradient/` 下的 144px 位图。
+
+## 版本号规则
+
+应用显示版本与 Release 标签采用两位小数：小改动加 **0.01**，大改动加 **0.10**。原 1.0.0 作为 1.00 基线，本次小改动为 **1.01**，标签为 **v1.01**。例如 1.01 的下一小版本为 1.02，下一大版本为 1.11。
+
+```sh
+npm run version:bump -- small   # 小改动 +0.01
+npm run version:bump -- large   # 大改动 +0.10，按实际改动二选一执行
+npm run version:check
+```
+
+`manifest.json` 是应用版本源，脚本同步 `core/app-info.js`、`static/app-version.json` 及 npm 锁文件。Android 版本码等于显示版本乘 100，1.01 对应 101。npm 要求三段 SemVer，内部映射为 1.0.1；1.10 对应 1.1.0，1.11 对应 1.1.1。映射使用整数运算，避免浮点累加误差。
+
+提交后推送 `main` 更新网页，再推送匹配的版本标签触发出包。三个工作流均校验版本一致性；Android Release 另外拒绝标签与应用版本不一致。
 
 ## GitHub Actions Releases 自动出包
 
@@ -71,7 +87,7 @@ npm run build:android -- --require-release
 
 任选一种方式发布：
 
-1. 推送 `v*` 标签，例如 `v1.0.0-ui.1`，Actions 完成后自动创建 Release 并上传 APK。
+1. 推送匹配应用版本的标签，例如 `v1.01`，Actions 完成后自动创建 Release 并上传 APK。
 2. 在 GitHub 发布同类标签的 Release，工作流自动附上 APK。
 3. 在 Actions → Android Release 手动输入已存在的版本标签运行。
 

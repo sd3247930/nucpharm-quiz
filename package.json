@@ -1,10 +1,12 @@
 {
   "name": "nucpharm-quiz",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "type": "module",
   "description": "核药通：离线核药学题库、练习与模拟考试",
   "scripts": {
+    "version:bump": "python scripts/release-version.py",
+    "version:check": "python scripts/release-version.py --check",
     "build:h5": "node scripts/build.mjs h5",
     "build:app": "node scripts/build.mjs app",
     "build:android": "node scripts/build-android.mjs",

@@ -2,8 +2,8 @@
     "name" : "核药通",
     "appid" : "__UNI__F9EA60D",
     "description" : "放射性药品学习与模拟考试（离线刷题）",
-    "versionName" : "1.0.0",
-    "versionCode" : "100",
+    "versionName" : "1.01",
+    "versionCode" : "101",
     "transformPx" : false,
     "locale" : "zh-Hans",
     /* 隐私：本应用完全离线，不启用 uni 统计与任何数据上报 */

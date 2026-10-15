@@ -4,5 +4,5 @@
   "appid": "__UNI__F9EA60D",
   "nativeVersion": "1.0.0",
   "compilerVersion": "3.0.0-alpha-5020520260821001",
-  "note": "Verified HBuilderX native runtime. Updating native settings, permissions, app id or native version requires a new runtime."
+  "note": "Verified HBuilderX native runtime baseline. Release packaging updates version metadata only; changing engine, native settings, permissions or app identity requires a new runtime."
 }

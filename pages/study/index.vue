@@ -48,10 +48,10 @@
 				<view class="np-section-heading"><text class="np-section-title">学习概况</text><text
 						class="np-caption">{{type === 'all' ? '全部题型' : typeLabel}}</text></view>
 				<view class="stats-grid"><stat-tile label="已做不同题" :value="String(scopedDone)" /><stat-tile
-						label="累计正确率" :value="accuracy" tone="correct" /><stat-tile label="当前错题"
+						label="累计准确率" :value="accuracy" tone="correct" /><stat-tile label="当前错题"
 						:value="String(scopedMistakes)" tone="wrong" /><stat-tile label="笔记数"
 						:value="String(scopedNotes)" tone="caution" /></view>
-				<text class="metrics-note">正确率 = 正确作答次数 / 累计作答次数，不含未作答题；覆盖率按不同题目去重。</text>
+				<text class="metrics-note">准确率 = 正确作答次数 / 累计作答次数，不含未作答题；覆盖率按不同题目去重。</text>
 			</view>
 			<view :style="{height:tabPad + 'px'}" />
 		</view>
@@ -295,13 +295,40 @@ export default {
 
 .stats-grid {
 	display: grid;
-	grid-template-columns: repeat(4, minmax(0, 1fr));
-	gap: 6px
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 12px
+}
+
+.stats-grid :deep(.tile) {
+	min-height: 108px;
+	padding: 18px 16px;
+	align-items: flex-start;
+	border-radius: 12px;
+	box-sizing: border-box
+}
+
+.stats-grid :deep(.tile-value) {
+	font-size: 28px;
+	line-height: 1.2;
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap
+}
+
+.stats-grid :deep(.tile-label) {
+	font-size: 13px;
+	line-height: 1.5;
+	margin-top: 8px
+}
+
+@media (max-width: 360px) {
+	.stats-grid :deep(.tile-value) {
+		font-size: 26px
+	}
 }
 
 .metrics-note {
 	display: block;
-	font-size: 11px;
+	font-size: 12px;
 	color: var(--np-text-2);
 	line-height: 1.7;
 	margin-top: 14px

@@ -2,9 +2,11 @@
 from copy import deepcopy
 import importlib.util
 from pathlib import Path
+import sys
 import unittest
 
 source = Path(__file__).resolve().parents[2] / 'scripts/package-android.py'
+sys.path.insert(0, str(source.parent))
 spec = importlib.util.spec_from_file_location('package_android', source)
 module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)
@@ -46,12 +48,20 @@ class ManifestMergeTests(unittest.TestCase):
         result['plus']['tabBar']['list'][0]['text'] = 'test'
         self.assertEqual(self.compiled['plus']['tabBar']['list'][0]['text'], '首页')
 
-    def test_native_identity_and_version_changes_are_rejected(self):
-        for field, value in [('id', 'different-app'), ('version', {'name': '2.0.0', 'code': 200})]:
+    def test_native_identity_invalid_or_decreasing_versions_are_rejected(self):
+        for field, value in [('id', 'different-app'), ('version', {'name': '1.01', 'code': 100}),
+                             ('version', {'name': '0.99', 'code': 99})]:
             compiled = deepcopy(self.compiled)
             compiled[field] = value
-            with self.subTest(field=field), self.assertRaises(RuntimeError):
+            with self.subTest(field=field), self.assertRaises((RuntimeError, ValueError)):
                 module.merge_resource_manifest(self.original, compiled)
+
+    def test_release_version_is_updated_without_replacing_native_configuration(self):
+        self.compiled['version'] = {'name': '1.01', 'code': 101}
+        result = module.merge_resource_manifest(self.original, self.compiled)
+        self.assertEqual(result['version'], self.compiled['version'])
+        self.assertEqual(result['permissions'], self.original['permissions'])
+        self.assertEqual(self.original['version']['code'], 100)
 
     def test_changed_empty_or_removed_native_routes_are_rejected(self):
         for routes in [[], [{'pagePath': 'pages/other/index'}]]:

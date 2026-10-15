@@ -19,7 +19,11 @@ jobs:
         with:
           node-version: '22'
           cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
       - run: npm ci --no-fund
+      - run: npm run version:check
       - run: npm run audit:check
       - run: npm run test:security
       - run: npm run build:h5

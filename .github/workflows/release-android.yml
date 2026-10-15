@@ -7,9 +7,9 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Release tag, e.g. v1.0.0 or v1.0.0-ui.1'
+        description: 'Release tag matching manifest.json, e.g. v1.01'
         required: true
-        default: v1.0.0
+        default: v1.01
 permissions:
   contents: read
 concurrency:
@@ -37,6 +37,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Verify release version and tag
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag || github.ref_name }}
+        run: python scripts/release-version.py --check --tag "$RELEASE_TAG"
       - run: npm ci --no-fund
       - run: npm run audit:check
       - run: npm run test:security
@@ -76,6 +80,6 @@ jobs:
           GH_REPO: ${{ github.repository }}
           RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag || github.ref_name }}
         run: |
-          [[ "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+([.-][A-Za-z0-9.-]+)?$ ]] || exit 1
-          gh release view "$RELEASE_TAG" >/dev/null 2>&1 || gh release create "$RELEASE_TAG" --verify-tag --title "核药通 $RELEASE_TAG" --notes-file RELEASE_NOTES.md
+          [[ "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]{2}$ ]] || exit 1
+          gh release view "$RELEASE_TAG" >/dev/null 2>&1 || gh release create "$RELEASE_TAG" --verify-tag --latest --title "核药通 $RELEASE_TAG" --notes-file RELEASE_NOTES.md
           gh release upload "$RELEASE_TAG" unpackage/releases/NucPharm.apk unpackage/releases/NucPharm.apk.sha256 --clobber
