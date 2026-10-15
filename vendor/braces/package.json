@@ -1,6 +1,6 @@
 {
-  "name": "braces",
-  "version": "3.0.3",
+  "name": "@nucpharm/braces-backport",
+  "version": "3.0.3-nucpharm.1",
   "description": "Bash-like brace expansion, implemented in JavaScript. Safer than other brace expansion libs, with complete support for the Bash 4.3 braces specification, without sacrificing speed.",
   "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
   "repository": "micromatch/braces",
@@ -13,5 +13,10 @@
     "fill-range": "^7.1.1"
   },
   "private": true,
-  "nucpharmPatch": "GHSA-vfj7-8cjw-p6xm: bounded parser nesting and iterative validation of AST inputs; see PATCH.md"
+  "nucpharmPatch": "GHSA-vfj7-8cjw-p6xm: bounded parser nesting and iterative validation of AST inputs; see PATCH.md",
+  "upstream": {
+    "name": "braces",
+    "version": "3.0.3",
+    "source": "https://registry.npmjs.org/braces/-/braces-3.0.3.tgz"
+  }
 }

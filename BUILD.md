@@ -90,4 +90,4 @@ npm run test:e2e
 
 `private/`、`docs/`、密钥、设备数据、日志和测试产物不公开。公开分支使用干净历史，不要推送未经检查的旧本地分支或标签。保留原 DCloud 编译器与原生壳，针对底层安全版本设置显式覆盖并执行兼容性回归，避免 `npm audit fix --force` 破坏配套版本，不要把开发服务器暴露到公网。
 
-原 43 项审计告警已通过升级及 `braces` 本地安全回补处理。详见 [DEPENDENCY_SECURITY.md](DEPENDENCY_SECURITY.md)。本地 file 依赖不会自动获得 npm 注册表审计覆盖，因此三个发行工作流同时执行 `npm run audit:check` 和 `npm run test:security`，不能只看审计数字或跳过恶意输入回归。
+原 43 项审计告警已通过升级及 `braces` 本地安全回补处理。详见 [DEPENDENCY_SECURITY.md](DEPENDENCY_SECURITY.md)。不同 npm 版本对本地 file 依赖的审计行为不同，审计也无法判断源码回补是否有效，因此三个发行工作流同时执行 `npm run audit:check` 和 `npm run test:security`，不能只看审计数字或跳过恶意输入回归。

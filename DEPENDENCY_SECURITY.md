@@ -21,11 +21,11 @@
 
 ## braces 本地回补
 
-[GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm) 当前没有官方已发布修复版。使用 [vendor/braces](vendor/braces/PATCH.md) 的可审查源码补丁，保留原 3.0.3 版本号、名称、MIT 许可证和来源校验记录，没有冒充官方新版本。
+[GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm) 当前没有官方已发布修复版。使用 [vendor/braces](vendor/braces/PATCH.md) 的可审查源码回补，保留 MIT 许可证及上游 3.0.3 来源校验记录，以独立身份 `@nucpharm/braces-backport@3.0.3-nucpharm.1` 明确标记本地维护版本，没有冒充官方新版本。根依赖通过 `braces` 别名保持调用兼容。
 
 补丁在解析器限制括号嵌套，并迭代校验直接传入递归 API 的 AST 深度、数量和循环子节点。普通 glob、数值范围及转义行为保持；数千层恶意输入以明确错误拒绝。`micromatch` 和 `chokidar` 实际加载路径也在回归测试中核对。
 
-**npm audit 不会自动为本地 file 依赖提供注册表漏洞覆盖，所以只看数字为零不够。** 必须同时运行下面的恶意输入回归。跟踪上游正式修复后替换本地补丁，不能只删除回归测试或改版本号。
+**npm 10 与 npm 11 对 file 依赖的审计行为不同，注册表审计也无法判断本地源码回补是否有效，所以更名或数字为零都不够。** 必须同时运行下面的恶意输入回归，核验实际加载的代码确实拒绝攻击，并在两个 npm 主版本中验证。跟踪上游正式修复后替换本地补丁，不能只删除回归测试或改版本号。
 
 ## 必须通过的验证
 
