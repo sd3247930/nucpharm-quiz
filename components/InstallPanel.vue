@@ -7,7 +7,7 @@
 				<view class="install-heading"><text class="np-h2">安装核药通</text><button class="install-close" role="button" tabindex="0" aria-label="关闭安装面板" @tap="close" @keydown.enter.prevent="close" @keydown.space.prevent="close">×</button></view>
 				<text class="install-copy">Android 手机下载 APK，安装后可完全离线学习。首次安装时，请按浏览器提示允许安装此应用。</text>
 				<a class="install-download" :href="apkUrl">📥 下载应用（APK）</a>
-				<text class="install-copy">迁移进度：先在网页版「设置 → 进度备份 → 导出进度」保存 JSON 文件，再到 App「设置 → 进度备份 → 导入进度」导入。</text>
+				<text class="install-copy">迁移进度：先在网页版「设置 → 导出学习进度」保存 JSON 文件，再到 App「设置 → 导入进度备份」导入。</text>
 				<text class="install-copy">iPhone / iPad：在 Safari 分享菜单中选择「添加到主屏幕」。网页版首次及重新加载需要网络。</text>
 				<a class="install-releases" :href="releasesUrl" target="_blank" rel="noopener noreferrer">查看版本与校验信息 ↗</a>
 			</view>
